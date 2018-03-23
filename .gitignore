@@ -66,5 +66,7 @@ fabric.properties
 # Sonarlint plugin
 .idea/sonarlint
 
+# Mac .DS_Store file
+.DS_Store
 
 # End of https://www.gitignore.io/api/intellij
