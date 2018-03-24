@@ -53,7 +53,7 @@ public class ScoreBot {
      * Goto TestCode Folder, For each file, grab it, get its src code, create Code Object
      */
     public void createCodeObjects() throws FileNotFoundException {
-            File testCodeDir = new File("C:\\Users\\jeffy\\IdeaProjects\\ItsJustACoincidenceProfessor\\TestCode");
+            File testCodeDir = new File("C:\\Users\\jeffy\\IdeaProjects\\v2\\ItsJustACoincidenceProfessor\\TestCode");
             if(testCodeDir.isDirectory()){
                 File[] codeFiles;
                 codeFiles = testCodeDir.listFiles();

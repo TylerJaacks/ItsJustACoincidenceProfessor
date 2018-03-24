@@ -18,6 +18,8 @@ public class appWindow extends JFrame {
     static String[] fileNameScores;
     static int[] fileScores;
 
+    static RSyntaxTextArea centerText;
+
     int targetIndex = -1;
 
     public appWindow(ArrayList<CodeObj> codeObjs, String[] fns, int[] fs){
@@ -28,9 +30,12 @@ public class appWindow extends JFrame {
 
         JPanel leftPanel = new JPanel();
         JPanel rightPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
 
         RSyntaxTextArea leftTextArea = new RSyntaxTextArea(50, 90);
         RSyntaxTextArea rightTextArea = new RSyntaxTextArea(50, 90);
+        centerText = new RSyntaxTextArea(2, 10);
+
 
         leftTextArea.setLineWrap(true);
         rightTextArea.setLineWrap(true);
@@ -43,6 +48,7 @@ public class appWindow extends JFrame {
             }
         }
         targetIndex = 0;
+        updateScore();
 
         CodeObj srcFile = srcCodeObj;
         CodeObj targetFile = codeObjs.get(targetIndex);
@@ -68,8 +74,10 @@ public class appWindow extends JFrame {
         RTextScrollPane leftPane = new RTextScrollPane(leftTextArea);
         RTextScrollPane rightPane = new RTextScrollPane(rightTextArea);
 
+
         leftPanel.add(leftPane);
         rightPanel.add(rightPane);
+        centerPanel.add(centerText);
 
 
         JButton prevBut = new JButton("Prev");
@@ -86,8 +94,9 @@ public class appWindow extends JFrame {
                  rightTextArea.setText(null);
                  CodeObj target = codeObjs.get(targetIndex);
                  for(int i = 0; i < target.getLines().size(); i++){
-                     rightTextArea.append(targetFile.getLines().get(i));
+                     rightTextArea.append(target.getLines().get(i));
                  }
+                 updateScore();
              }
             }
         });
@@ -103,9 +112,10 @@ public class appWindow extends JFrame {
                     rightTextArea.setText(null);
                     CodeObj target = codeObjs.get(targetIndex);
                     for(int i = 0; i < target.getLines().size(); i++){
-                        rightTextArea.append(targetFile.getLines().get(i));
+                        String line = target.getLines().get(i);
+                        rightTextArea.append(line);
                     }
-                    rightTextArea.update(rightTextArea.getGraphics());
+                    updateScore();
                 }
             }
         });
@@ -120,9 +130,16 @@ public class appWindow extends JFrame {
         JPanel southPanel = new JPanel();
         southPanel.add(prevBut); southPanel.add(nextBut);
 
+        getContentPane().add(centerPanel, BorderLayout.CENTER);
         getContentPane().add(leftPanel, BorderLayout.WEST); //idk what this does
         getContentPane().add(rightPanel, BorderLayout.EAST); //idk what this does
         getContentPane().add(southPanel, BorderLayout.PAGE_END);
+    }
+
+    private void updateScore(){
+        centerText.setText(null);
+        centerText.append("Score\n");
+        centerText.append(fileScores[targetIndex] + "\n");
     }
 
 
