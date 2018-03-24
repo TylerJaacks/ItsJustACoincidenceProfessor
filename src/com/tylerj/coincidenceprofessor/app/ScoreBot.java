@@ -1,6 +1,9 @@
+package com.tylerj.coincidenceprofessor.app;
+
+import com.tylerj.coincidenceprofessor.algorithm.Algorithm;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -67,7 +70,7 @@ public class ScoreBot {
         }
 
         private int getSimilarityScore(CodeObj cur){
-            return 1;
+        return Algorithm.getLevenshteinDistance(srcCodeObj.getWords(), cur.getWords());
         }
 
         private void calculateValues(String srcCodeFile){
