@@ -1,0 +1,13 @@
+
+/**
+ * This class encapsulates the game logic for a video game called Dots.
+ * The game consists of a 2D array or grid of colored icons, called dots,
+ * along with an ordered list that we will call the selection list.  Intuitively,
+ * the selection list represents a set of adjacent dots, all of the same color,
+ * that have been selected by the player.  When selection is complete (e.g. the
+ * mouse is released), the selected dots disappear from the grid, and the dots
+ * above shift down  to take their places.  Then new dots fill in each column from the top.
+ * A point is scored for each dot that disappears from the grid.  There
+ * is a special rule for the case that the selected dots form a loop;
+ * then all dots in the grid of the same color disappear too.
+ */
