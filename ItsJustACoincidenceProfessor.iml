@@ -7,7 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="junit:junit:4.12" level="project" />
-    <orderEntry type="library" name="com.fifesoft:rsyntaxtextarea:2.6.1" level="project" />
+    <orderEntry type="library" exported="" name="junit:junit:4.12" level="project" />
+    <orderEntry type="library" exported="" name="com.fifesoft:rsyntaxtextarea:2.6.1" level="project" />
+    <orderEntry type="library" name="com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" name="org.apache.httpcomponents:httpclient:4.2.5" level="project" />
   </component>
 </module>
