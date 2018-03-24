@@ -1,7 +1,8 @@
 package com.tylerj.coincidenceprofessor.app;
 
 import javax.swing.*; //swing is built on top of awt
-import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,26 +17,52 @@ public class appWindow extends JFrame {
     static CodeObj srcCodeObj;
 
     static String[] fileNameScores;
-    static int[] fileScores;
+    static float[] fileScores;
 
-    static RSyntaxTextArea centerText;
+    static RSyntaxTextArea similarityTextArea;
+    static RSyntaxTextArea plagTextArea;
+
+    static JSlider slider;
 
     int targetIndex = -1;
+    int thresholdValue = 50;
 
-    public appWindow(ArrayList<CodeObj> codeObjs, String[] fns, int[] fs){
+
+    public appWindow(ArrayList<CodeObj> codeObjs, String[] fns, float[] fs){
 
         setLayout(new BorderLayout());
 
         this.codeObjs = codeObjs; fileNameScores = fns; fileScores = fs;
 
+        slider = new JSlider();
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int value = slider.getValue();
+                updateLikelyhood();
+                thresholdValue = value;
+            }
+        });
+
+
         JPanel leftPanel = new JPanel();
         JPanel rightPanel = new JPanel();
         JPanel centerPanel = new JPanel();
 
-        RSyntaxTextArea leftTextArea = new RSyntaxTextArea(50, 90);
-        RSyntaxTextArea rightTextArea = new RSyntaxTextArea(50, 90);
-        centerText = new RSyntaxTextArea(2, 10);
+        RSyntaxTextArea leftTextArea = new RSyntaxTextArea(30, 65);
+        RSyntaxTextArea rightTextArea = new RSyntaxTextArea(30, 65);
+        plagTextArea = new RSyntaxTextArea(4, 10);
+        similarityTextArea = new RSyntaxTextArea(2, 10);
 
+
+        similarityTextArea.setFont(similarityTextArea.getFont().deriveFont(24f));
+        plagTextArea.setFont(plagTextArea.getFont().deriveFont(16f));
+
+        leftTextArea.setFont(leftTextArea.getFont().deriveFont(20f));
+        rightTextArea.setFont(rightTextArea.getFont().deriveFont(20f));
+
+        leftTextArea.setEditable(false);rightTextArea.setEditable(false);
+        similarityTextArea.setEditable(false); plagTextArea.setEditable(false);
 
         leftTextArea.setLineWrap(true);
         rightTextArea.setLineWrap(true);
@@ -48,7 +75,7 @@ public class appWindow extends JFrame {
             }
         }
         targetIndex = 0;
-        updateScore();
+        updateScore(); updateLikelyhood();
 
         CodeObj srcFile = srcCodeObj;
         CodeObj targetFile = codeObjs.get(targetIndex);
@@ -77,7 +104,9 @@ public class appWindow extends JFrame {
 
         leftPanel.add(leftPane);
         rightPanel.add(rightPane);
-        centerPanel.add(centerText);
+        centerPanel.add(similarityTextArea);
+        centerPanel.add(plagTextArea);
+        centerPanel.add(slider);
 
 
         JButton prevBut = new JButton("Prev");
@@ -96,7 +125,8 @@ public class appWindow extends JFrame {
                  for(int i = 0; i < target.getLines().size(); i++){
                      rightTextArea.append(target.getLines().get(i));
                  }
-                 updateScore();
+                 rightTextArea.setCaretPosition(0);
+                 updateScore(); updateLikelyhood();
              }
             }
         });
@@ -115,7 +145,9 @@ public class appWindow extends JFrame {
                         String line = target.getLines().get(i);
                         rightTextArea.append(line);
                     }
+                    rightTextArea.setCaretPosition(0);
                     updateScore();
+                    updateLikelyhood();
                 }
             }
         });
@@ -123,7 +155,7 @@ public class appWindow extends JFrame {
        // setContentPane();
 
         setTitle("It's Just A Coincidence Professor!");
-        setSize(1800, 1000);
+        setSize(1920, 1080);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close program when X is clicked
 
 
@@ -131,15 +163,32 @@ public class appWindow extends JFrame {
         southPanel.add(prevBut); southPanel.add(nextBut);
 
         getContentPane().add(centerPanel, BorderLayout.CENTER);
-        getContentPane().add(leftPanel, BorderLayout.WEST); //idk what this does
-        getContentPane().add(rightPanel, BorderLayout.EAST); //idk what this does
+        getContentPane().add(leftPanel, BorderLayout.WEST);
+        getContentPane().add(rightPanel, BorderLayout.EAST);
         getContentPane().add(southPanel, BorderLayout.PAGE_END);
     }
 
     private void updateScore(){
-        centerText.setText(null);
-        centerText.append("Score\n");
-        centerText.append(fileScores[targetIndex] + "\n");
+        similarityTextArea.setText(null);
+        similarityTextArea.append("Similarity Score\n");
+        similarityTextArea.append("     "+fileScores[targetIndex] + "%\n");
+    }
+
+    private void updateLikelyhood(){
+        plagTextArea.setText(null);
+        String howLikelyPlag = "ERROR";
+        float sim = fileScores[targetIndex];
+        if(sim < thresholdValue){
+            howLikelyPlag = "Unlikely PLag";
+            plagTextArea.setForeground(Color.GREEN);
+        }
+        else{
+            howLikelyPlag = "Likely PLag";
+            plagTextArea.setForeground(Color.RED);
+        }
+
+        plagTextArea.append(howLikelyPlag + "\n");
+        plagTextArea.append("THRESHOLD VALUE: " + thresholdValue);
     }
 
 

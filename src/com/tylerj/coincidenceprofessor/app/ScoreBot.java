@@ -7,11 +7,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static com.tylerj.coincidenceprofessor.algorithm.Algorithm.getPercentageSimilarity;
+
 public class ScoreBot {
 
         public ArrayList<CodeObj> codeObjs;
         public String[] fileNameScores;
-        public int[] fileScores;
+        public float[] fileScores;
         private File[] codeFiles;
         private CodeObj srcCodeObj;
 
@@ -69,13 +71,14 @@ public class ScoreBot {
             }
         }
 
-        private int getSimilarityScore(CodeObj cur){
-        return Algorithm.getLevenshteinDistance(srcCodeObj.getWords(), cur.getWords());
+        private float getSimilarityScore(CodeObj cur){
+        int distance = Algorithm.getLevenshteinDistance(srcCodeObj.getWords(), cur.getWords());
+        return getPercentageSimilarity(distance, cur.getWords().length(), srcCodeObj.getWords().length());
         }
 
         private void calculateValues(String srcCodeFile){
             fileNameScores = new String[codeObjs.size() - 1];
-            fileScores = new int[codeObjs.size() - 1];
+            fileScores = new float[codeObjs.size() - 1];
 
             if(srcCodeObj == null){
                 System.exit(2);
@@ -86,7 +89,8 @@ public class ScoreBot {
                     CodeObj cur = codeObjs.get(i);
                     if(!cur.getIsSrcCodeFile()){
                         fileNameScores[index] = cur.getFileName();
-                        fileScores[index] = getSimilarityScore(cur);
+                        float score = getSimilarityScore(cur);
+                        fileScores[index] = score;
                         index++;
                     }
                 }
