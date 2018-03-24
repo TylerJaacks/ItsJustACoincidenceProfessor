@@ -1,6 +1,6 @@
+package com.tylerj.coincidenceprofessor.app;
+
 import javax.swing.*; //swing is built on top of awt
-import java.awt.*;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.fife.ui.rtextarea.*;
