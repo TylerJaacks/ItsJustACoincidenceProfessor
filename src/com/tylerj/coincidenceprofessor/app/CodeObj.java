@@ -16,7 +16,7 @@ public class CodeObj {
         this.fileName = fileName;
         this.lines = lines;
 
-        if(fileName.equals("studentFile.txt")){
+        if(fileName.equals("note.txt")){
             isSrcCodeFile = true;
         }
         else{

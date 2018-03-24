@@ -1,6 +1,10 @@
 package com.tylerj.coincidenceprofessor.app;
 
 import com.tylerj.coincidenceprofessor.algorithm.Algorithm;
+import com.tylerj.coincidenceprofessor.codesearch.CodeSearch;
+import com.tylerj.coincidenceprofessor.codesearch.Languages;
+import com.tylerj.coincidenceprofessor.codesearch.Locations;
+import com.tylerj.coincidenceprofessor.codesearch.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,8 +21,9 @@ public class ScoreBot {
         public float[] fileScores;
         private File[] codeFiles;
 
-
-
+        public Languages language;
+        public Locations locations;
+        public String searchString;
 
         public ScoreBot(){
             targetCodeObjs = new ArrayList<CodeObj>();
@@ -29,7 +34,13 @@ public class ScoreBot {
      * srcFile is file to check for plagarism
      */
     public void processCodeFiles(String srcFile, boolean accessGit) throws FileNotFoundException {
+            language = Languages.JAVA;
+            locations = Locations.GITHUB;
+
             createCodeObjects(accessGit);
+
+            searchString = srcCodeObj.getWords();
+
             calculateValues();
         }
 
@@ -90,7 +101,7 @@ public class ScoreBot {
      */
     public boolean createCodeObjects(boolean accessGit) throws FileNotFoundException {
         if (!accessGit) {
-            File testCodeDir = new File("C:\\Users\\jeffy\\IdeaProjects\\v2\\ItsJustACoincidenceProfessor\\TestCode");
+            File testCodeDir = new File("/Users/tylerjaacks/Desktop/ItsJustACoincidenceProfessor/TestCode/");
             if (testCodeDir.isDirectory()) {
                 File[] codeFiles;
                 codeFiles = testCodeDir.listFiles();
@@ -107,6 +118,7 @@ public class ScoreBot {
         }
         else{
             String[] arr = getGitFiles();
+
             if(arr.length == 0){
                 return false;
             }
@@ -144,9 +156,15 @@ public class ScoreBot {
             }
         }
 
-        private String[] getGitFiles(){
-            String[] arr = new String[1];
-            return arr;
+        private String[] getGitFiles() {
+
+
+            ArrayList<String> arr = CodeSearch.getSimilarSourceCode(searchString, Utils.languageEnumToId(language), Utils.locationEnumToId(locations));
+            String[] finalArr = new String[arr.size()];
+
+            finalArr = arr.toArray(finalArr);
+
+            return finalArr;
         }
 
         public String getSrcExt(){
