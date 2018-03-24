@@ -19,11 +19,13 @@ public class ScoreBot {
         public CodeObj srcCodeObj;
 
         public float[] fileScores;
-        private File[] codeFiles;
+        private File[] codeFiles; //get ride of
 
         public Languages language;
         public Locations locations;
         public String searchString;
+
+        public String srcFileString;
 
         public ScoreBot(){
             targetCodeObjs = new ArrayList<CodeObj>();
@@ -33,15 +35,37 @@ public class ScoreBot {
      * Gets string from files, runs algo to get similarity, inits similarity Data Structure
      * srcFile is file to check for plagarism
      */
-    public void processCodeFiles(String srcFile, boolean accessGit) throws FileNotFoundException {
+    public int processCodeFiles(String srcFile, boolean accessGit) throws FileNotFoundException {
+        String buildSearchString = "";
+        Scanner s = new Scanner(new File("C:\\Users\\jeffy\\IdeaProjects\\v3\\ItsJustACoincidenceProfessor\\TestCode" + "\\" + srcFile));
+        while(s.hasNextLine()){
+            buildSearchString = buildSearchString + s.nextLine();
+        }
+        searchString = buildSearchString;
+        targetCodeObjs.clear();
+        fileScores = null;
+        codeFiles = null;
+
+
             language = Languages.JAVA;
             locations = Locations.GITHUB;
+            srcFileString = srcFile;
 
-            createCodeObjects(accessGit);
+            boolean success;
+            success = createCodeObjects(accessGit);
 
-            searchString = srcCodeObj.getWords();
+            if(success){
 
-            calculateValues();
+                calculateValues();
+                return targetCodeObjs.size();
+            }
+            else{
+                targetCodeObjs = null;
+                srcCodeObj = null;
+                fileScores = null;
+                return 0;
+            }
+
         }
 
         private void createCodeObj(File f) throws FileNotFoundException {
@@ -56,7 +80,7 @@ public class ScoreBot {
                 while(s.hasNextLine()){
                     lines.add(s.nextLine() + "\n");
                 }
-                CodeObj temp = new CodeObj(words, f.getName(), lines);
+                CodeObj temp = new CodeObj(words, f.getName(), lines, srcFileString);
 
             if(temp.getIsSrcCodeFile()){
                 srcCodeObj = temp;
@@ -76,17 +100,23 @@ public class ScoreBot {
             s = new Scanner(file);
             ArrayList<String> lines = new ArrayList<String>();
             String line = "";
-            while(s.hasNext()){
-                String cur = s.next();
-                if(cur.equals("\n")){
-                    lines.add(line); //add line to arraylist
-                    line = ""; //reset line
-                }
-                else{
-                    line += cur; //add on to line
-                }
+//            while(s.hasNext()){
+//                String cur = s.next();
+//                if(cur.equals("\n")){
+//                    lines.add(line); //add line to arraylist
+//                    line = ""; //reset line
+//                }
+//                else{
+//                    line += cur; //add on to line
+//                }
+//            }
+
+            while(s.hasNextLine()){
+                String cur = s.nextLine();
+                lines.add(cur);
             }
-            CodeObj temp = new CodeObj(words, file, lines);
+
+            CodeObj temp = new CodeObj(words, file, lines, srcFileString);
 
             if(temp.getIsSrcCodeFile()){
                 srcCodeObj = temp;
@@ -101,7 +131,7 @@ public class ScoreBot {
      */
     public boolean createCodeObjects(boolean accessGit) throws FileNotFoundException {
         if (!accessGit) {
-            File testCodeDir = new File("/Users/tylerjaacks/Desktop/ItsJustACoincidenceProfessor/TestCode/");
+            File testCodeDir = new File("C:\\Users\\jeffy\\IdeaProjects\\v3\\ItsJustACoincidenceProfessor\\TestCode");
             if (testCodeDir.isDirectory()) {
                 File[] codeFiles;
                 codeFiles = testCodeDir.listFiles();
@@ -119,12 +149,12 @@ public class ScoreBot {
         else{
             String[] arr = getGitFiles();
 
-            if(arr.length == 0){
+            if(arr.length == 0){ //No results
                 return false;
             }
             else{
                     for(int i = 0; i < arr.length; i++){
-
+                        createCodeObj(arr[i]);
                     }
                 return true;
             }

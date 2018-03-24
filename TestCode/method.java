@@ -1,0 +1,1 @@
+{printOne();}public static void printOne() { System.out.println public static void printTwo(){ printOne(); printOne();}}
