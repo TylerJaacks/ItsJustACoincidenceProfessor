@@ -9,6 +9,6 @@ Programming for Source Code Plagiarism Checking](http://informatika.stei.itb.ac.
 * [Plagiarism Detection Using the Levenshtein Distance and Smith-Waterman
 Algorithm](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4603758)
 
-# Libraries
+# Libraries used for this project
 * [RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea)
 * [Junit](https://junit.org/)
