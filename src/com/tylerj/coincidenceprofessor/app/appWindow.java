@@ -58,7 +58,7 @@ public class appWindow extends JFrame {
 
 
         similarityTextArea.setFont(similarityTextArea.getFont().deriveFont(24f));
-        plagTextArea.setFont(plagTextArea.getFont().deriveFont(16f));
+        plagTextArea.setFont(plagTextArea.getFont().deriveFont(20f));
 
         leftTextArea.setFont(leftTextArea.getFont().deriveFont(20f));
         rightTextArea.setFont(rightTextArea.getFont().deriveFont(20f));
@@ -139,9 +139,25 @@ public class appWindow extends JFrame {
     }
 
     private void setUpButtonListeners(){
+
         prevBut = new JButton("Prev");
         nextBut = new JButton("Next");
         gitBut = new JButton("Search GIT");
+
+        prevBut.setPreferredSize(new Dimension(150, 100));
+        nextBut.setPreferredSize(new Dimension(150, 100));
+        gitBut.setPreferredSize(new Dimension(150, 100));
+
+        prevBut.setFont(new Font("Arial", Font.PLAIN, 18));
+        nextBut.setFont(new Font("Arial", Font.PLAIN, 18));
+        gitBut.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        prevBut.setBackground(Color.orange);
+        nextBut.setBackground(Color.orange);
+        gitBut.setBackground(Color.orange);
+
+
+
 
         prevBut.addActionListener(new ActionListener(){
             @Override
@@ -217,11 +233,11 @@ public class appWindow extends JFrame {
         String howLikelyPlag = "ERROR";
         float sim = fileScores[targetIndex];
         if(sim < thresholdValue){
-            howLikelyPlag = "Unlikely PLag";
+            howLikelyPlag = "CLEAN";
             plagTextArea.setForeground(Color.black);
         }
         else{
-            howLikelyPlag = "Likely PLag";
+            howLikelyPlag = "PLAGARISM!!!!!";
             plagTextArea.setForeground(Color.RED);
         }
 
