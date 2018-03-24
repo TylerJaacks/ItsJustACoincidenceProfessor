@@ -11,4 +11,5 @@ Algorithm](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4603758)
 
 # Libraries used for this project
 * [RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea)
+* [JSON.simple](https://code.google.com/archive/p/json-simple/)
 * [Junit](https://junit.org/)
