@@ -1,3 +1,5 @@
+package com.tylerj.coincidenceprofessor.app;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
