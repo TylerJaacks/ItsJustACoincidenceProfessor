@@ -1,12 +1,18 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ScoreBot {
 
-        ArrayList<CodeObj> codeObjs;
-        File[] codeFiles;
+        public ArrayList<CodeObj> codeObjs;
+        public String[] fileNameScores;
+        public int[] fileScores;
+        private File[] codeFiles;
+        private CodeObj srcCodeObj;
+
+
 
         public ScoreBot(){
             codeObjs = new ArrayList<CodeObj>();
@@ -18,7 +24,7 @@ public class ScoreBot {
      */
     public void processCodeFiles(String srcFile) throws FileNotFoundException {
             createCodeObjects();
-
+            calculateValues(srcFile);
         }
 
         private void createCodeObj(File f) throws FileNotFoundException {
@@ -27,7 +33,17 @@ public class ScoreBot {
                 while(s.hasNext()){
                     words = words + s.next();
                 }
-            codeObjs.add(new CodeObj(words, f.getName()));
+
+            s = new Scanner(f);
+            ArrayList<String> lines = new ArrayList<String>();
+                while(s.hasNextLine()){
+                    lines.add(s.nextLine() + "\n");
+                }
+                CodeObj temp = new CodeObj(words, f.getName(), lines);
+            codeObjs.add(temp);
+            if(temp.getIsSrcCodeFile()){
+                srcCodeObj = temp;
+            }
         }
 
     /**
@@ -47,6 +63,30 @@ public class ScoreBot {
             else{
                 System.out.println("ERROR Bad File Directory");
                 System.exit(1);
+            }
+        }
+
+        private int getSimilarityScore(CodeObj cur){
+            return 1;
+        }
+
+        private void calculateValues(String srcCodeFile){
+            fileNameScores = new String[codeObjs.size() - 1];
+            fileScores = new int[codeObjs.size() - 1];
+
+            if(srcCodeObj == null){
+                System.exit(2);
+            }
+            else{
+                int index = 0;
+                for(int i = 0; i < codeObjs.size(); i++){
+                    CodeObj cur = codeObjs.get(i);
+                    if(!cur.getIsSrcCodeFile()){
+                        fileNameScores[index] = cur.getFileName();
+                        fileScores[index] = getSimilarityScore(cur);
+                        index++;
+                    }
+                }
             }
         }
 }
