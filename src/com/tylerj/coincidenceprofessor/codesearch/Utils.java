@@ -1,5 +1,7 @@
 package com.tylerj.coincidenceprofessor.codesearch;
 
+import org.apache.commons.codec.language.bm.Lang;
+
 /**
  * Utils for getting the languageId from an enumId.
  */
@@ -72,5 +74,51 @@ public class Utils {
         }
 
         return 0;
+    }
+
+    public static Languages getLocation(String lang){
+
+        switch(lang){
+            case "JAVA":
+                return Languages.JAVA;
+            case "C":
+                return Languages.C;
+            case "CS":
+                return Languages.CS;
+            case "H":
+                return Languages.H;
+            case "CPP":
+                return Languages.CPP;
+            case "HTML":
+                return Languages.HTML;
+            case "PHP":
+                return Languages.PHP;
+            case "M":
+                return Languages.M;
+            case "GROOVY":
+                return Languages.GROOVY;
+            case "JS":
+                return Languages.JS;
+            case "PY":
+                return Languages.PY;
+            case "PL":
+                return Languages.PL;
+            case "RB":
+                return Languages.RB;
+            case "LUA":
+                return Languages.LUA;
+            case "VB":
+                return Languages.VB;
+            case "PS":
+                return Languages.PS;
+            case "GO":
+                return Languages.GO;
+            case "JSON":
+                return Languages.JSON;
+            default:
+                return null;
+
+        }
+
     }
 }

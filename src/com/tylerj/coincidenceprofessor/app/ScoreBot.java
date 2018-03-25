@@ -25,36 +25,55 @@ public class ScoreBot {
         public Locations locations;
         public String searchString;
 
-        public String srcFileString;
+        public String srcFilePath;
+        public String srcFileName;
 
         public ScoreBot(){
             targetCodeObjs = new ArrayList<CodeObj>();
         }
 
     /**
-     * Gets string from files, runs algo to get similarity, inits similarity Data Structure
-     * srcFile is file to check for plagarism
+     *
+     * @param srcFile ABSOLUTE PATH OF SRC FILE
+     * @param accessGit
+     * @return
+     * @throws FileNotFoundException
      */
     public int processCodeFiles(String srcFile, boolean accessGit) throws FileNotFoundException {
+        resetValues();
         String buildSearchString = "";
-        Scanner s = new Scanner(new File("C:\\Users\\jeffy\\IdeaProjects\\v3\\ItsJustACoincidenceProfessor\\TestCode" + "\\" + srcFile));
+        Scanner s = new Scanner(new File(srcFile));
         while(s.hasNextLine()){
             buildSearchString = buildSearchString + s.nextLine();
         }
         searchString = buildSearchString;
-        targetCodeObjs.clear();
-        fileScores = null;
-        codeFiles = null;
+        srcFilePath = srcFile;
+
+        String temp = ""; boolean periodFound = false;
+        for(int i = srcFilePath.length() - 1; i > 0; i--){
+            char c = srcFilePath.charAt(i);
+            if(Character.isLetter(c)){
+                temp = c + temp;
+            }
+            else if(c == '.' && !periodFound){
+                periodFound = true;
+                temp = c + temp;
+            }
+            else{
+                break;
+            }
+        }
+
+        srcFileName = temp;
 
 
-            language = Languages.JAVA;
-            locations = Locations.GITHUB;
-            srcFileString = srcFile;
 
             boolean success;
             success = createCodeObjects(accessGit);
 
             if(success){
+                language = Utils.getLocation(getSrcExt().toUpperCase());
+                locations = Locations.GITHUB;
 
                 calculateValues();
                 return targetCodeObjs.size();
@@ -66,6 +85,18 @@ public class ScoreBot {
                 return 0;
             }
 
+        }
+
+        private void resetValues(){
+            targetCodeObjs = new ArrayList<CodeObj>();
+            srcCodeObj = null;
+            fileScores = null;
+            codeFiles = null; //get ride of
+            language = null;
+            locations = null;
+            searchString = null;
+            srcFilePath = null;
+            srcFileName = null;
         }
 
         private void createCodeObj(File f) throws FileNotFoundException {
@@ -80,7 +111,7 @@ public class ScoreBot {
                 while(s.hasNextLine()){
                     lines.add(s.nextLine() + "\n");
                 }
-                CodeObj temp = new CodeObj(words, f.getName(), lines, srcFileString);
+                CodeObj temp = new CodeObj(words, f.getName(), lines, srcFileName);
 
             if(temp.getIsSrcCodeFile()){
                 srcCodeObj = temp;
@@ -116,7 +147,7 @@ public class ScoreBot {
                 lines.add(cur);
             }
 
-            CodeObj temp = new CodeObj(words, file, lines, srcFileString);
+            CodeObj temp = new CodeObj(words, file, lines, srcFilePath);
 
             if(temp.getIsSrcCodeFile()){
                 srcCodeObj = temp;

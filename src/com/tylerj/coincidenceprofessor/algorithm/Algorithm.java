@@ -24,7 +24,6 @@ public class Algorithm {
                     distanceMatrix[row][col] = distanceMatrix[row - 1][col - 1];
                 } else {
                     int tmp = Math.min((distanceMatrix[row - 1][col] + 1), (distanceMatrix[row][col -  1] + 1));
-
                     distanceMatrix[row][col] = Math.min(tmp, (distanceMatrix[row - 1][col - 1] + 1));
                 }
             }
