@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Represents a Code Search API Client.
@@ -115,18 +116,26 @@ public class CodeSearch {
 
             JSONArray results = (JSONArray) jsonObject.get("results");
 
-            ArrayList<JSONObject> fileLines = new ArrayList<>();
             ArrayList<String> files = new ArrayList<>();
 
             for (Object o : results) {
                 JSONObject object1 = (JSONObject) o;
-                Object object2 = object1.get("lines");
+                JSONObject lines = (JSONObject) object1.get("lines");
 
-                fileLines.add((JSONObject) object2);
-            }
+                System.out.println("Object Name: " + ((JSONObject) o).toJSONString());
 
-            for (int i = 0; i < fileLines.size() - 1; i++) {
-                files.add(regexJSONString(fileLines.get(0).toJSONString()));
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for (Object key : lines.keySet()) {
+                    String keyStr = (String) key;
+                    Object keyValue = lines.get(keyStr);
+
+                    System.out.println("key: " + keyStr + " value: " + keyValue);
+
+                    stringBuilder.append(keyValue + "\n");
+                }
+
+                files.add(stringBuilder.toString());
             }
 
             return files;
@@ -138,34 +147,5 @@ public class CodeSearch {
         }
 
         return new ArrayList<>();
-    }
-
-    /**
-     * Takes a source code JSON string and removes the bullshit.
-     * @param s Source code JSON string.
-     * @return The better version of a source code JSON file.
-     */
-    private static String regexJSONString(String s) {
-        String regEx1 = "\\{\"[1-9][0-9]{1,9999}\":\"";
-        String regEx2 = "\",\"[1-9][1-9]{1,9999}\":\"";
-        String regEx3 = "\",\"[0-9][0-9]{1,9999}\":\"";
-        String regEx4 = "\\\\\\\\\\\\/\\\\\\\\\\\\/";
-        String regEx5 = "\\\\\\/\\\\\\/*";
-        String regEx6 = "\\*\\\\\\/";
-        String regEx7 = "\\\\\"";
-        String regEx8 = "\"\\}";
-
-        s = s.replaceAll(regEx1, "\n");
-        s = s.replaceAll(regEx2, "\n");
-        s = s.replaceAll(regEx3, "\n");
-        s = s.replaceAll(regEx4, "//");
-        s = s.replaceAll(regEx5, "//");
-        s = s.replaceAll(regEx6, "/*");
-        s = s.replaceAll(regEx7, "\"");
-        s = s.replaceAll(regEx8, "}");
-
-        s += "\n";
-
-        return s;
     }
 }

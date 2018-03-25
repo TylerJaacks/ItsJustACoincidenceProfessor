@@ -17,10 +17,10 @@ public class appWindow extends JFrame {
     static ArrayList<CodeObj> targetCodeObjs;
     static CodeObj srcCodeObj;
 
-    static float[] fileScores;
 
     static RSyntaxTextArea similarityTextArea;
     static RSyntaxTextArea plagTextArea;
+    static RSyntaxTextArea gitResultsTextArea;
 
     static RSyntaxTextArea leftTextArea;
     static RSyntaxTextArea rightTextArea;
@@ -42,7 +42,6 @@ public class appWindow extends JFrame {
 
         this.sb = sb;
         targetCodeObjs = sb.targetCodeObjs;
-        fileScores = sb.fileScores;
         srcCodeObj = sb.srcCodeObj;
 
 
@@ -55,16 +54,20 @@ public class appWindow extends JFrame {
         rightTextArea = new RSyntaxTextArea(30, 65);
         plagTextArea = new RSyntaxTextArea(4, 20);
         similarityTextArea = new RSyntaxTextArea(2, 20);
+        gitResultsTextArea = new RSyntaxTextArea(4, 20);
 
 
         similarityTextArea.setFont(similarityTextArea.getFont().deriveFont(24f));
         plagTextArea.setFont(plagTextArea.getFont().deriveFont(20f));
+        gitResultsTextArea.setFont(gitResultsTextArea.getFont().deriveFont(20f));
 
         leftTextArea.setFont(leftTextArea.getFont().deriveFont(20f));
         rightTextArea.setFont(rightTextArea.getFont().deriveFont(20f));
 
         leftTextArea.setEditable(false);rightTextArea.setEditable(false);
-        similarityTextArea.setEditable(false); plagTextArea.setEditable(false);
+        similarityTextArea.setEditable(false); plagTextArea.setEditable(false); gitResultsTextArea.setEditable(false);
+
+        gitResultsTextArea.setText("Git Results:");
 
         leftTextArea.setLineWrap(true);
         rightTextArea.setLineWrap(true);
@@ -104,6 +107,7 @@ public class appWindow extends JFrame {
         centerPanel.add(similarityTextArea);
         centerPanel.add(plagTextArea);
         centerPanel.add(slider);
+        centerPanel.add(gitResultsTextArea);
 
 
 
@@ -203,16 +207,23 @@ public class appWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    sb.processCodeFiles(srcCodeObj.getFileName(), true);
+                    int results = sb.processCodeFiles(srcCodeObj.getFileName(), true);
                     targetIndex = 0;
-                    CodeObj targetFile = targetCodeObjs.get(targetIndex);
-                    rightTextArea.setText(null);
-                    for(int i = 0; i < targetFile.getLines().size(); i++){
-                        rightTextArea.append(targetFile.getLines().get(i));
+                    updateGitResults(results);
+                    if(results > 0){
+                        CodeObj targetFile = targetCodeObjs.get(targetIndex);
+                        rightTextArea.setText(null);
+                        for(int i = 0; i < targetFile.getLines().size(); i++){
+                            rightTextArea.append(targetFile.getLines().get(i));
+                        }
+                        rightTextArea.setCaretPosition(0);
+                        updateScore();
+                        updateLikelyhood();
                     }
-                    rightTextArea.setCaretPosition(0);
-                    updateScore();
-                    updateLikelyhood();
+                    else{
+                        rightTextArea.setText(null);
+                    }
+
                 } catch (FileNotFoundException e1) {
                     e1.printStackTrace();
                 }
@@ -225,13 +236,13 @@ public class appWindow extends JFrame {
     private void updateScore(){
         similarityTextArea.setText(null);
         similarityTextArea.append("Similarity Score\n");
-        similarityTextArea.append("     "+fileScores[targetIndex] + "%\n");
+        similarityTextArea.append("     "+sb.fileScores[targetIndex] + "%\n");
     }
 
     private void updateLikelyhood(){
         plagTextArea.setText(null);
         String howLikelyPlag = "ERROR";
-        float sim = fileScores[targetIndex];
+        float sim = sb.fileScores[targetIndex];
         if(sim < thresholdValue){
             howLikelyPlag = "CLEAN";
             plagTextArea.setForeground(Color.black);
@@ -243,6 +254,12 @@ public class appWindow extends JFrame {
 
         plagTextArea.append(howLikelyPlag + "\n");
         plagTextArea.append("THRESHOLD VALUE: " + thresholdValue);
+    }
+
+    private void updateGitResults(int count){
+        gitResultsTextArea.setText(null);
+        gitResultsTextArea.append("Git Results\n");
+        gitResultsTextArea.append("" + count);
     }
 
 
