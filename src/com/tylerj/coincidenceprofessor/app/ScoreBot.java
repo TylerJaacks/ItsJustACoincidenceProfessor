@@ -52,7 +52,7 @@ public class ScoreBot {
         String temp = ""; boolean periodFound = false;
         for(int i = srcFilePath.length() - 1; i > 0; i--){
             char c = srcFilePath.charAt(i);
-            if(Character.isLetter(c)){
+            if(c != '\\'){
                 temp = c + temp;
             }
             else if(c == '.' && !periodFound){
@@ -65,6 +65,7 @@ public class ScoreBot {
         }
 
         srcFileName = temp;
+        CodeObj.srcFileName = srcFileName;
 
 
 
@@ -72,7 +73,7 @@ public class ScoreBot {
             success = createCodeObjects(accessGit);
 
             if(success){
-                language = Utils.getLocation(getSrcExt().toUpperCase());
+                    language = Utils.getLocation(getSrcExt().toUpperCase());
                 locations = Locations.GITHUB;
 
                 calculateValues();

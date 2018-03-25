@@ -8,7 +8,7 @@ public class CodeObj {
     private String words;
     private String fileName;
     private boolean isSrcCodeFile;
-    private static String srcFileName;
+    public static String srcFileName;
 
     private ArrayList<String> lines;
 
